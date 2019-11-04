@@ -1,0 +1,21 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="us-votes.js"></script>
+</head>
+
+<body>
+    <h1>Hello</h1>
+    <h2>Create Object from JSON String</h2>
+
+<p id="votes_dem"></p>
+
+<script>
+var txt = '{"name":"John", "age":30, "city":"New York"}'
+var votes = us_votes;
+var obj = JSON.parse(votes);
+document.getElementById("votes_dem").innerHTML = obj.votes_dem + ", " + obj.votes_gop;
+</script> 
+</body>
+
+</html>

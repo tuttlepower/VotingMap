@@ -1,0 +1,95 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Murky</title>
+
+    <!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
+        integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
+        crossorigin=""></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script>
+        var UsgsLayers = L.Class.extend({
+
+            initialize: function (sUri, pRenderer) {
+
+                // add basemap
+                this.BaseLayer = L.esri.basemapLayer('DarkGray');
+
+                // add Featurelayer (Counties from TigerWeb) [1]
+                this.Counties = L.esri.featureLayer({
+                    url: sUri + '1',
+                    simplifyFactor: 0.5,
+                    precision: 5,
+                    weight: 1,
+                    color: 'white',
+                    fillColor: '#3884ff',
+                    renderer: pRenderer,
+                    onEachFeature:onEachFeature
+                });
+            }
+        });
+
+
+        var _sUri = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/';
+
+        // initialize reference to renderer...
+        var _pRenderer = L.svg(); // alternatively "L.canvas()"
+
+        // initialize object to manage layer definitions...
+        _pUsgsLayers = new UsgsLayers(_sUri, _pRenderer);
+
+        // add layers to map
+        var map = L.map('map', {
+            layers: [_pUsgsLayers.BaseLayer,
+                _pUsgsLayers.Counties
+            ],
+            zoomAnimationThreshold: 1,
+            renderer: _pRenderer
+        }).setView([39, -97.5], 4);
+
+        function onEachFeature(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.popupContent) {
+                layer.bindPopup(feature.properties.popupContent);
+            }
+        }
+
+        var myGeoJson = L.geoJson(map, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Test Map</title>
+
+    <!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
+        integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet Geocoder from CDN, needed for Search Bar -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.css"
+        integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+        crossorigin="">
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.js"
+        integrity="sha512-uK5jVwR81KVTGe8KpJa1QIN4n60TsSV8+DPbL5wWlYQvb0/nYNgSOg9dZG6ViQhwx/gaMszuWllTemL+K+IXjg=="
+        crossorigin=""></script>
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script>
+
+        //creates variable called map sets view to US
+        var map = L.map('map', {
+            center: [39, -97.5],
+            zoom: 4,
+            renderer: L.canvas(),
+            
+        });
+
+        //Sets basemap color and features 
+        L.esri.basemapLayer('DarkGray').addTo(map);
+
+        //creates variable "counties" and gives it the value of the specific mapserver(counties)
+        var counties = L.esri.featureLayer({
+            url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer/86',
+
+        }).addTo(map);
+
+        //binds popups to the counties layer
+        counties.bindPopup(function (layer) {
+
+            //this determines what goes inside the popup for each building
+            return L.Util.template(
+                '<h3>{COUNTY}</h3>',
+                layer.feature.properties);
+        });
+
+        //inserts generic searchbar
+        var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
+        L.esri.Geocoding.geosearch({
+            useMapBounds: false,
+            zoomToResult: true,
+            expanded: false,
+            providers: [
+                arcgisOnline,
+                L.esri.Geocoding.featureLayerProvider({
+                    url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer/86',
+                    searchFields: ['STATE', 'COUNTY'],
+                    label: 'Counties',
+                    bufferRadius: 5000,
+
+                    formatSuggestion: function (feature) {
+                        // search results 
+                        // cut "+ ' - ' + feature.properties.BuildMaint" but may want to re-add it
+                        return feature.properties.County+ ' - ' + feature.properties.State;
+                    }
+                })
+            ]
+        }).addTo(map);
+        // Show feature and popup when selected
+    </script>
+
+</body>
+
+</html>

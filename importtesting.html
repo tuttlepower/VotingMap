@@ -19,7 +19,9 @@
         crossorigin=""></script>
 
     <script type="text/javascript" src="us-votes.js"></script>
-
+    <script type="text/javascript">
+        var us_votes = us_votes;
+    </script>
 
     <style>
         body {
@@ -38,8 +40,28 @@
 </head>
 
 <body>
-    <p>Hello</p>
-    <script><p>us_votes.combined_fip.count</p></script>
+    <p id="demo"></p>
+
+    <script>
+        var us_votes, x;
+
+        //prints a single digit
+        //x = us_votes[9].votes_dem;
+        //document.getElementById("demo").innerHTML = x;
+
+        //Prints alldat, but nothing useful
+        //for (x in us_votes) {
+        //  document.getElementById("demo").innerHTML += x + "<br>";
+        //}
+        for (i in us_votes) {
+
+            document.write(us_votes[i].combined_fips + "<br />");
+
+        }
+    </script>
+
+
+
     <div id="map"></div>
 
     <script>
@@ -61,31 +83,20 @@
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
-                if (feature.properties.GEOID === "") {
-                    return {
-                        fillColor: 'red',
-
-                    };
-                } else if (feature.properties.GEOID === '32007') {
-                    return {
-                        fillColor: 'blue',
-
-                    };
-                } else if (feature.properties.GEOID === '06071') {
-                    return {
-                        fillColor: 'green',
-
-                    };
-                } else {
-                    return {
-                        fillColor: 'grey',
-
-                    };
+                for (i in us_votes) {
+                    if (feature.properties.GEOID == us_votes[i].combined_fips) {
+                        if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
+                            return {
+                                fillColor: 'blue',
+                            };
+                        }else{
+                            return{
+                                fillColor:'red',
+                            }
+                        }
+                    }
                 }
-            },
-
-
-
+            }
         }).addTo(map);
         //binds popups to the counties layer
         counties.bindPopup(function (layer) {

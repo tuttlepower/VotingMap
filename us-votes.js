@@ -31353,7 +31353,7 @@ var us_votes = [
       "per_point_diff": "78.14%",
       "state_abbr": "SD",
       "county_name": "Oglala County",
-      "combined_fips": 46113
+      "combined_fips": 46102
     },
     {
       "": 2412,

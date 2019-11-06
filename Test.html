@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Voting Map</title>
+    <title>Test Map</title>
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
@@ -62,6 +62,10 @@
             simplifyFactor: 0.5,
             precision: 5,
             weight: .5,
+<<<<<<< HEAD
+=======
+            opacity:1,
+>>>>>>> 3aed7808e6759001307276ceb67c074485cc55d0
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
@@ -70,12 +74,21 @@
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
                                 fillColor: 'blue',
+<<<<<<< HEAD
                                 color: 'white',
                             };
                         } else {
                             return {
                                 fillColor: 'red',
                                 color: 'white',
+=======
+                                color:'white',
+                            };
+                        }else{
+                            return{
+                                fillColor:'red',
+                                color:'white',
+>>>>>>> 3aed7808e6759001307276ceb67c074485cc55d0
                             }
                         }
                     }
@@ -86,7 +99,7 @@
         counties.bindPopup(function (layer) {
             //this determines what goes inside the popup for each building
             return L.Util.template(
-                '<p>{GEOID}</p><p>{NAME}</p>',
+                '<p>{FUNCSTAT}</p><p>{NAME}</p>',
                 layer.feature.properties);
         });
         //inserts generic searchbar

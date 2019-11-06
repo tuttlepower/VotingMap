@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Voting Map</title>
+    <title>Test Map</title>
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
@@ -47,14 +47,15 @@
         });
 
         //Sets basemap color and features 
-        L.esri.basemapLayer('DarkGray').addTo(map);
+        L.esri.basemapLayer('Gray').addTo(map);
 
         //pulls county data from US
         var counties = L.esri.featureLayer({
             url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
             simplifyFactor: 0.5,
             precision: 5,
-            weight: 1,
+            weight: .5,
+            opacity:1,
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
@@ -63,12 +64,12 @@
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
                                 fillColor: 'blue',
-                                color:'blue',
+                                color:'white',
                             };
                         }else{
                             return{
                                 fillColor:'red',
-                                color:'red',
+                                color:'white',
                             }
                         }
                     }
@@ -79,7 +80,7 @@
         counties.bindPopup(function (layer) {
             //this determines what goes inside the popup for each building
             return L.Util.template(
-                '<p>{GEOID}</p><p>{NAME}</p>',
+                '<p>{FUNCSTAT}</p><p>{NAME}</p>',
                 layer.feature.properties);
         });
     </script>

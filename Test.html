@@ -2,6 +2,7 @@
 
 <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png" type="Head" sizes="16x16">
     <title>Test Map</title>
 
     <!-- Load Leaflet from CDN -->
@@ -62,10 +63,6 @@
             simplifyFactor: 0.5,
             precision: 5,
             weight: .5,
-<<<<<<< HEAD
-=======
-            opacity:1,
->>>>>>> 3aed7808e6759001307276ceb67c074485cc55d0
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
@@ -74,21 +71,12 @@
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
                                 fillColor: 'blue',
-<<<<<<< HEAD
-                                color: 'white',
-                            };
-                        } else {
-                            return {
-                                fillColor: 'red',
-                                color: 'white',
-=======
                                 color:'white',
                             };
                         }else{
                             return{
                                 fillColor:'red',
                                 color:'white',
->>>>>>> 3aed7808e6759001307276ceb67c074485cc55d0
                             }
                         }
                     }

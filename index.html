@@ -2,6 +2,7 @@
 
 <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png" type="Head" sizes="16x16">
     <title>Voting Map</title>
 
     <!-- Load Leaflet from CDN -->
@@ -47,14 +48,14 @@
         });
 
         //Sets basemap color and features 
-        L.esri.basemapLayer('Gray').addTo(map);
+        L.esri.basemapLayer('DarkGray').addTo(map);
 
         //pulls county data from US
         var counties = L.esri.featureLayer({
             url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
             simplifyFactor: 0.5,
             precision: 5,
-            weight: 1,
+            weight: .5,
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
@@ -63,12 +64,12 @@
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
                                 fillColor: 'blue',
-                                color:'blue',
+                                color:'gray',
                             };
                         }else{
                             return{
                                 fillColor:'red',
-                                color:'red',
+                                color:'gray',
                             }
                         }
                     }

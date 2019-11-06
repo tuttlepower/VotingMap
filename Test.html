@@ -17,6 +17,13 @@
     <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
         integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
         crossorigin=""></script>
+    <!-- Load Esri Leaflet Geocoder from CDN, needed for Search Bar -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.css"
+        integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+        crossorigin="">
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.js"
+        integrity="sha512-uK5jVwR81KVTGe8KpJa1QIN4n60TsSV8+DPbL5wWlYQvb0/nYNgSOg9dZG6ViQhwx/gaMszuWllTemL+K+IXjg=="
+        crossorigin=""></script>
 
 
     <style>
@@ -47,14 +54,14 @@
         });
 
         //Sets basemap color and features 
-        L.esri.basemapLayer('DarkGray').addTo(map);
+        L.esri.basemapLayer('Gray').addTo(map);
 
         //pulls county data from US
         var counties = L.esri.featureLayer({
             url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
             simplifyFactor: 0.5,
             precision: 5,
-            weight: 1,
+            weight: .5,
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
@@ -63,12 +70,12 @@
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
                                 fillColor: 'blue',
-                                color:'blue',
+                                color: 'white',
                             };
-                        }else{
-                            return{
-                                fillColor:'red',
-                                color:'red',
+                        } else {
+                            return {
+                                fillColor: 'red',
+                                color: 'white',
                             }
                         }
                     }
@@ -82,6 +89,27 @@
                 '<p>{GEOID}</p><p>{NAME}</p>',
                 layer.feature.properties);
         });
+        //inserts generic searchbar
+        var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
+        L.esri.Geocoding.geosearch({
+            useMapBounds: false,
+            zoomToResult: true,
+            expanded: false,
+            providers: [
+                arcgisOnline,
+                L.esri.Geocoding.featureLayerProvider({
+                    url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
+                    searchFields: ['GEOID', 'NAME'],
+                    label: 'Counties',
+                    bufferRadius: 5000,
+
+                    formatSuggestion: function (feature) {
+                        // search results 
+                        return feature.properties.NAME;
+                    }
+                })
+            ]
+        }).addTo(map);
     </script>
 
 </body>

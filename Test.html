@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Voting Map</title>
+
+    <!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
+        integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
+        crossorigin=""></script>
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+    <script type="text/javascript" src="us-votes.js"></script>
+    <script>
+        //creates variable called map and sets the view to Ohio State's campus(latlong) with a zoom level of 15
+        var map = L.map('map', {
+            center: [39.0902, -95.7129],
+            zoom: 5,
+        });
+
+        //Sets basemap color and features 
+        L.esri.basemapLayer('DarkGray').addTo(map);
+
+        //pulls county data from US
+        var counties = L.esri.featureLayer({
+            url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
+            simplifyFactor: 0.5,
+            precision: 5,
+            weight: 1,
+            color: 'white',
+            fillColor: 'white',
+            style: function (feature) {
+                for (i in us_votes) {
+                    if (feature.properties.GEOID == us_votes[i].combined_fips) {
+                        if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
+                            return {
+                                fillColor: 'blue',
+                                color:'blue',
+                            };
+                        }else{
+                            return{
+                                fillColor:'red',
+                                color:'red',
+                            }
+                        }
+                    }
+                }
+            }
+        }).addTo(map);
+        //binds popups to the counties layer
+        counties.bindPopup(function (layer) {
+            //this determines what goes inside the popup for each building
+            return L.Util.template(
+                '<p>{GEOID}</p><p>{NAME}</p>',
+                layer.feature.properties);
+        });
+    </script>
+
+</body>
+
+</html>

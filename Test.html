@@ -63,6 +63,8 @@
             simplifyFactor: 0.5,
             precision: 5,
             weight: .5,
+            //fillscale between 0 and 1
+            fillOpacity: .5,
             color: 'white',
             fillColor: 'white',
             style: function (feature) {
@@ -70,13 +72,17 @@
                     if (feature.properties.GEOID == us_votes[i].combined_fips) {
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
-                                fillColor: 'blue',
+                                //dems
+                                fillColor: 'rgb(0, 0, 255)',
                                 color:'white',
+                                fillOpacity: (us_votes[i].total_votes/50000),
                             };
                         }else{
                             return{
-                                fillColor:'red',
+                                //gop
+                                fillColor:'rgb(255, 0, 0)',
                                 color:'white',
+                                fillOpacity: (us_votes[i].total_votes/50000),
                             }
                         }
                     }
@@ -87,6 +93,7 @@
         counties.bindPopup(function (layer) {
             //this determines what goes inside the popup for each building
             return L.Util.template(
+                
                 '<p>{FUNCSTAT}</p><p>{NAME}</p>',
                 layer.feature.properties);
         });

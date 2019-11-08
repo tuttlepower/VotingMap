@@ -48,7 +48,7 @@
         });
 
         //Sets basemap color and features 
-        L.esri.basemapLayer('DarkGray').addTo(map);
+        L.esri.basemapLayer('Gray').addTo(map);
 
         //pulls county data from US
         var counties = L.esri.featureLayer({
@@ -65,11 +65,13 @@
                             return {
                                 fillColor: 'blue',
                                 color:'gray',
+                                fillOpacity: (us_votes[i].total_votes/50000),
                             };
                         }else{
                             return{
                                 fillColor:'red',
                                 color:'gray',
+                                fillOpacity: (us_votes[i].total_votes/50000),
                             }
                         }
                     }

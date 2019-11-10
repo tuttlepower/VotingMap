@@ -57,21 +57,22 @@
             precision: 5,
             weight: .5,
             color: 'white',
-            fillColor: 'white',
+            //fillColor: 'white',
             style: function (feature) {
                 for (i in us_votes) {
                     if (feature.properties.GEOID == us_votes[i].combined_fips) {
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
-                                fillColor: 'blue',
-                                color:'gray',
-                                fillOpacity: (us_votes[i].total_votes/50000),
+                                fillColor: 'hsl('+ 0 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
+                                //color:'gray',
+                                
+                                //fillOpacity: (us_votes[i].total_votes/50000),
                             };
                         }else{
                             return{
-                                fillColor:'red',
-                                color:'gray',
-                                fillOpacity: (us_votes[i].total_votes/50000),
+                                fillColor:'hsl('+ 240 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
+                                //color:'gray',
+                                //fillOpacity: (us_votes[i].total_votes/50000),
                             }
                         }
                     }

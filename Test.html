@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <link rel="icon" href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png" type="Head" sizes="16x16">
-    <title>Voting Map</title>
+    <title>Test Map</title>
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
@@ -27,18 +27,30 @@
         }
 
         #map {
-            position: absolute;
+            position: fixed;
             top: 0;
             bottom: 0;
             right: 0;
             left: 0;
         }
+        #legend{
+            position:absolute;
+            left:10px;
+            bottom:10px;
+        }
+
     </style>
 </head>
 
 <body>
 
     <div id="map"></div>
+   
+            <div id="legend">
+                    <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
+            </div>
+          
+
     <script type="text/javascript" src="us-votes.js"></script>
     <script>
         //creates variable called map and sets the view to Ohio State's campus(latlong) with a zoom level of 15
@@ -55,7 +67,9 @@
             url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
             simplifyFactor: 0.5,
             precision: 5,
-            weight: .5,
+            weight: .3,
+            //opacity:1,
+            fillOpacity:1,
             color: 'white',
             //fillColor: 'white',
             style: function (feature) {
@@ -63,16 +77,22 @@
                     if (feature.properties.GEOID == us_votes[i].combined_fips) {
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
-                                fillColor: 'hsl('+ 0 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
-                                //color:'gray',
+                                //fillColor: 'hsl(250,100%,50%)'
+                                fillColor: 'hsl('+240+','+(us_votes[i].per_point_diff)+','+ 50+ '%)',
+                                //fillColor: 'hsl('+ 0 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
                                 
-                                //fillOpacity: (us_votes[i].total_votes/50000),
+                                color:'hsl('+240+','+(us_votes[i].per_point_diff)+','+50+'%)',
+                                
+                                fillOpacity: (us_votes[i].total_votes/59828),
                             };
                         }else{
                             return{
-                                fillColor:'hsl('+ 240 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
-                                //color:'gray',
-                                //fillOpacity: (us_votes[i].total_votes/50000),
+                                //fillColor: 'hsl(0,100%,50%)'
+                                fillColor:'hsl('+0+','+(us_votes[i].per_point_diff)+','+50+'%)',
+                                //fillColor:'hsl('+ 240 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
+
+                                color:'hsl('+0+','+(us_votes[i].per_point_diff)+','+50+'%)',
+                                fillOpacity: (us_votes[i].total_votes/59828),
                             }
                         }
                     }

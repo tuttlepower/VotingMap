@@ -2,8 +2,10 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png" type="Head" sizes="16x16">
-    <title>Voting Map</title>
+    <link rel="icon"
+        href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png"
+        type="Head" sizes="16x16">
+    <title>Vote Map</title>
 
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
@@ -17,6 +19,13 @@
     <!-- Load Esri Leaflet from CDN -->
     <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
         integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
+        crossorigin=""></script>
+    <!-- Load Esri Leaflet Geocoder from CDN, needed for Search Bar -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.css"
+        integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+        crossorigin="">
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.js"
+        integrity="sha512-uK5jVwR81KVTGe8KpJa1QIN4n60TsSV8+DPbL5wWlYQvb0/nYNgSOg9dZG6ViQhwx/gaMszuWllTemL+K+IXjg=="
         crossorigin=""></script>
 
 
@@ -33,23 +42,23 @@
             right: 0;
             left: 0;
         }
-        #legend{
-            position:absolute;
-            left:10px;
-            bottom:10px;
-        }
 
+        #legend {
+            position: absolute;
+            left: 10px;
+            bottom: 10px;
+        }
     </style>
 </head>
 
 <body>
 
     <div id="map"></div>
-   
-            <div id="legend">
-                    <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
-            </div>
-          
+
+    <div id="legend">
+        <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
+    </div>
+
 
     <script type="text/javascript" src="us-votes.js"></script>
     <script>
@@ -69,7 +78,7 @@
             precision: 5,
             weight: .3,
             //opacity:1,
-            fillOpacity:1,
+            fillOpacity: 1,
             color: 'white',
             //fillColor: 'white',
             style: function (feature) {
@@ -78,21 +87,23 @@
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
                                 //fillColor: 'hsl(250,100%,50%)'
-                                fillColor: 'hsl('+240+','+(us_votes[i].per_point_diff)+','+ 50+ '%)',
+                                fillColor: 'hsl(' + 240 + ',' + (us_votes[i].per_point_diff) + ',' + 50 +
+                                    '%)',
                                 //fillColor: 'hsl('+ 0 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
-                                
-                                color:'hsl('+240+','+(us_votes[i].per_point_diff)+','+50+'%)',
-                                
-                                fillOpacity: (us_votes[i].total_votes/59828),
+
+                                color: 'hsl(' + 240 + ',' + (us_votes[i].per_point_diff) + ',' + 50 + '%)',
+
+                                fillOpacity: (us_votes[i].total_votes / 59828),
                             };
-                        }else{
-                            return{
+                        } else {
+                            return {
                                 //fillColor: 'hsl(0,100%,50%)'
-                                fillColor:'hsl('+0+','+(us_votes[i].per_point_diff)+','+50+'%)',
+                                fillColor: 'hsl(' + 0 + ',' + (us_votes[i].per_point_diff) + ',' + 50 +
+                                    '%)',
                                 //fillColor:'hsl('+ 240 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
 
-                                color:'hsl('+0+','+(us_votes[i].per_point_diff)+','+50+'%)',
-                                fillOpacity: (us_votes[i].total_votes/59828),
+                                color: 'hsl(' + 0 + ',' + (us_votes[i].per_point_diff) + ',' + 50 + '%)',
+                                fillOpacity: (us_votes[i].total_votes / 59828),
                             }
                         }
                     }
@@ -103,10 +114,37 @@
         counties.bindPopup(function (layer) {
             //this determines what goes inside the popup for each building
             return L.Util.template(
-                
+
                 '<p>{GEOID}</p><p>{NAME}</p>',
                 layer.feature.properties);
         });
+        //inserts generic searchbar
+        var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
+        L.esri.Geocoding.geosearch({
+            //allows the search to look through items outside of the initial screen position
+            useMapBounds: false,
+            zoomToResult: true,
+            expanded: false,
+            providers: [
+                arcgisOnline,
+                L.esri.Geocoding.featureLayerProvider({
+                    //gives our map information to the search bar
+                    url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
+                    //specifies what to search by
+                    searchFields: ['COUNTY','NAME'],
+                    //generic label, that seperates generic results from map specific results in search bar
+                    label: 'Counties',
+                    //random large number to allow for the search bar to search large areas of the map.
+                    bufferRadius: 5000,
+                    //shows the searches in the search bar 
+                    formatSuggestion: function (feature) {
+                        // search results 
+                        // cut "+ ' - ' + feature.properties.BuildMaint" but may want to re-add it
+                        return feature.properties.NAME;
+                    }
+                })
+            ]
+        }).addTo(map);
     </script>
 
 </body>

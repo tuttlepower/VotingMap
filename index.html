@@ -62,11 +62,12 @@
 
     <script type="text/javascript" src="us-votes.js"></script>
     <script>
-        //creates variable called map and sets the view to Ohio State's campus(latlong) with a zoom level of 15
+        //creates variable called map and sets the view to middle of America with a zoom level of 5
         var map = L.map('map', {
             center: [39.0902, -95.7129],
             zoom: 5,
         });
+        
 
         //Sets basemap color and features 
         L.esri.basemapLayer('Gray').addTo(map);

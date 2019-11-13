@@ -2,7 +2,11 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png" type="Head" sizes="16x16">
+    <meta name="twitter:image"
+        content="https://images.pexels.com/photos/21014/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&w=500">
+    <link rel="icon"
+        href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png"
+        type="Head" sizes="16x16">
     <title>Test Map</title>
 
     <!-- Load Leaflet from CDN -->
@@ -34,11 +38,17 @@
         }
 
         #map {
-            position: absolute;
+            position: fixed;
             top: 0;
             bottom: 0;
             right: 0;
             left: 0;
+        }
+
+        #legend {
+            position: absolute;
+            left: 10px;
+            bottom: 10px;
         }
     </style>
 </head>
@@ -46,6 +56,12 @@
 <body>
 
     <div id="map"></div>
+
+    <div id="legend">
+        <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
+    </div>
+
+
     <script type="text/javascript" src="us-votes.js"></script>
     <script>
         //creates variable called map and sets the view to Ohio State's campus(latlong) with a zoom level of 15
@@ -62,23 +78,40 @@
             url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
             simplifyFactor: 0.5,
             precision: 5,
+<<<<<<< HEAD
             weight: 1,
             opacity:1,
             fillOpacity:95,
+=======
+            weight: .3,
+            //opacity:1,
+            fillOpacity: 1,
+>>>>>>> ea588e46e4ead0db3697df6e8a25b2c8fd7852ac
             color: 'white',
-            fillColor: 'white',
+            //fillColor: 'white',
             style: function (feature) {
                 for (i in us_votes) {
                     if (feature.properties.GEOID == us_votes[i].combined_fips) {
                         if (us_votes[i].votes_dem > us_votes[i].votes_gop) {
                             return {
-                                fillColor: 'blue',
-                                color:'white',
+                                //fillColor: 'hsl(250,100%,50%)'
+                                fillColor: 'hsl(' + 240 + ',' + (us_votes[i].per_point_diff) + ',' + 50 +
+                                    '%)',
+                                //fillColor: 'hsl('+ 0 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
+
+                                color: 'hsl(' + 240 + ',' + (us_votes[i].per_point_diff) + ',' + 50 + '%)',
+
+                                fillOpacity: (us_votes[i].total_votes / 59828),
                             };
-                        }else{
-                            return{
-                                fillColor:'red',
-                                color:'white',
+                        } else {
+                            return {
+                                //fillColor: 'hsl(0,100%,50%)'
+                                fillColor: 'hsl(' + 0 + ',' + (us_votes[i].per_point_diff) + ',' + 50 +
+                                    '%)',
+                                //fillColor:'hsl('+ 240 +','+((Math.abs(us_votes[i].votes_dem-us_votes[i].votes_gop)/(us_votes[i].total_votes)))+','+(((1-(us_votes[i].total_votes/50)*100)/2)+50)+')',
+
+                                color: 'hsl(' + 0 + ',' + (us_votes[i].per_point_diff) + ',' + 50 + '%)',
+                                fillOpacity: (us_votes[i].total_votes / 59828),
                             }
                         }
                     }
@@ -86,28 +119,49 @@
             }
         }).addTo(map);
         //binds popups to the counties layer
-        counties.bindPopup(function (layer) {
-            //this determines what goes inside the popup for each building
-            return L.Util.template(
-                '<p>{FUNCSTAT}</p><p>{NAME}</p>',
-                layer.feature.properties);
+        counties.bindPopup(function (feature, us_votes) {
+            for (i in us_votes) {
+                if (feature.properties.GEOID === us_votes[i].combined_fips) {
+                    //this determines what goes inside the popup for each building
+                    return L.Util.template(
+                        '<p>{GEOID} Need to ' + us_votes[i].votes_dem + 'see something</p><p>{NAME}</p>',
+                        feature.feature.properties);
+
+                } else {
+                    return {
+                        L.Util.template(
+                        '<p>{GEOID}</p><p>{NAME}</p>',
+                            layer.feature.properties);
+                    }
+                }
+
+            }
+
+
+
         });
         //inserts generic searchbar
         var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
         L.esri.Geocoding.geosearch({
+            //allows the search to look through items outside of the initial screen position
             useMapBounds: false,
             zoomToResult: true,
             expanded: false,
             providers: [
                 arcgisOnline,
                 L.esri.Geocoding.featureLayerProvider({
+                    //gives our map information to the search bar
                     url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
-                    searchFields: ['GEOID', 'NAME'],
+                    //specifies what to search by
+                    searchFields: ['COUNTY', 'NAME'],
+                    //generic label, that seperates generic results from map specific results in search bar
                     label: 'Counties',
+                    //random large number to allow for the search bar to search large areas of the map.
                     bufferRadius: 5000,
-
+                    //shows the searches in the search bar 
                     formatSuggestion: function (feature) {
                         // search results 
+                        // cut "+ ' - ' + feature.properties.BuildMaint" but may want to re-add it
                         return feature.properties.NAME;
                     }
                 })

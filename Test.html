@@ -2,6 +2,8 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta name="twitter:image"
+        content="https://images.pexels.com/photos/21014/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&w=500">
     <link rel="icon"
         href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png"
         type="Head" sizes="16x16">
@@ -111,12 +113,26 @@
             }
         }).addTo(map);
         //binds popups to the counties layer
-        counties.bindPopup(function (layer) {
-            //this determines what goes inside the popup for each building
-            return L.Util.template(
+        counties.bindPopup(function (feature, us_votes) {
+            for (i in us_votes) {
+                if (feature.properties.GEOID === us_votes[i].combined_fips) {
+                    //this determines what goes inside the popup for each building
+                    return L.Util.template(
+                        '<p>{GEOID} Need to ' + us_votes[i].votes_dem + 'see something</p><p>{NAME}</p>',
+                        feature.feature.properties);
 
-                '<p>{GEOID} Need to '+us_votes[2].votes_dem+'see something</p><p>{NAME}</p>',
-                layer.feature.properties);
+                } else {
+                    return {
+                        L.Util.template(
+                        '<p>{GEOID}</p><p>{NAME}</p>',
+                            layer.feature.properties);
+                    }
+                }
+
+            }
+
+
+
         });
         //inserts generic searchbar
         var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
@@ -131,7 +147,7 @@
                     //gives our map information to the search bar
                     url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
                     //specifies what to search by
-                    searchFields: ['COUNTY','NAME'],
+                    searchFields: ['COUNTY', 'NAME'],
                     //generic label, that seperates generic results from map specific results in search bar
                     label: 'Counties',
                     //random large number to allow for the search bar to search large areas of the map.

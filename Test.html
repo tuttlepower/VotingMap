@@ -129,9 +129,12 @@
         counties.bindPopup(function (layer) {
             for (i in us_votes) {
                 if (layer.feature.properties.GEOID == us_votes[i].combined_fips) {
-                        return L.Util.template(
-                            '<div><p>State :'+us_votes[i].state_abbr.toString() +'</p><p>County Name: {NAME}</p>'+'<p>Democratic Votes: '+ us_votes[i].votes_dem +'</p></div>',
-                            layer.feature.properties);
+                    return L.Util.template(
+                        '<div><p><b>State: </b>' + us_votes[i].state_abbr.toString() +
+                        '</p><p><b>County Name: </b>{NAME}</p><p><b>Democratic Votes:</b> ' + us_votes[i]
+                        .votes_dem.toLocaleString() +'<b> ('+(us_votes[i].per_dem*100).toFixed(2)+'%)</b>'+ '</p><p><b>Republican Votes: </b>' + us_votes[i].votes_gop.toLocaleString() +'<b> ('+(us_votes[i].per_gop*100).toFixed(2)+'%)</b>'+
+                        '</p></div>',
+                        layer.feature.properties);
 
 
                 }

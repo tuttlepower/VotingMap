@@ -49,10 +49,11 @@
             left: 10px;
             bottom: 10px;
         }
-        #links{
+
+        #links {
             position: absolute;
-            right:10px;
-            bottom:20px;
+            right: 10px;
+            bottom: 20px;
         }
     </style>
 </head>
@@ -64,9 +65,11 @@
     <div id="legend">
         <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
     </div>
-    
+
     <div id="links">
-        <button onclick="window.location.href = 'https://stemlounge.com/muddy-america-color-balancing-trumps-election-map-infographic/';">Original Muddy Map</button>
+        <button
+            onclick="window.location.href = 'https://stemlounge.com/muddy-america-color-balancing-trumps-election-map-infographic/';">Original
+            Muddy Map</button>
         <button onclick="window.location.href = 'https://github.com/tuttlepower/VotingMap';">Github</button>
     </div>
 
@@ -78,7 +81,7 @@
             center: [39.0902, -95.7129],
             zoom: 5,
         });
-        
+
 
         //Sets basemap color and features 
         L.esri.basemapLayer('Gray').addTo(map);
@@ -124,32 +127,43 @@
         }).addTo(map);
         //binds popups to the counties layer
         counties.bindPopup(function (layer) {
-            //this determines what goes inside the popup for each building
-            return L.Util.template(
+            for (i in us_votes) {
+                if (layer.feature.properties.GEOID == us_votes[i].combined_fips) {
+                    return L.Util.template(
+                        '<div><p><b>State: </b>' + us_votes[i].state_abbr.toString() +
+                        '</p><p><b>County Name: </b>{NAME}</p><p><b>Democratic Votes:</b> ' + us_votes[i]
+                        .votes_dem.toLocaleString() + '<b> (' + (us_votes[i].per_dem * 100).toFixed(2) +
+                        '%)</b>' + '</p><p><b>Republican Votes: </b>' + us_votes[i].votes_gop
+                        .toLocaleString() + '<b> (' + (us_votes[i].per_gop * 100).toFixed(2) + '%)</b>' +
+                        '</p></div>',
+                        layer.feature.properties);
 
-                '<p>{GEOID}</p><p>{NAME}</p>',
-                layer.feature.properties);
+
+                }
+            }
+            //this determines what goes inside the popup for each building
+
         });
 
         /////////////////////////////
-    
+
         //Placeholder
         var Test = L.layerGroup();
 
         //uses esri basemaplayers to get a light theme and streets
         var grayscale = L.esri.basemapLayer('Gray'),
             grayLabels = L.esri.basemapLayer('GrayLabels'),
-        darkmode = L.esri.basemapLayer('DarkGray');
+            darkmode = L.esri.basemapLayer('DarkGray');
 
 
-        
+
 
         //gives different basemap options
         var baseLayers = {
             "Grayscale": grayscale,
             "Grayscale Labeled": grayLabels,
             "Dark Mode": darkmode,
-            
+
         };
 
         //different layers can be placed here, allowing them to be seen and hidden 
@@ -177,7 +191,7 @@
                     //gives our map information to the search bar
                     url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
                     //specifies what to search by
-                    searchFields: ['COUNTY','NAME'],
+                    searchFields: ['COUNTY', 'NAME'],
                     //generic label, that seperates generic results from map specific results in search bar
                     label: 'Counties',
                     //random large number to allow for the search bar to search large areas of the map.

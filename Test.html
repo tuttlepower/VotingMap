@@ -2,8 +2,6 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="twitter:image"
-        content="https://images.pexels.com/photos/21014/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=2&w=500">
     <link rel="icon"
         href="https://raw.githubusercontent.com/tuttlepower/tuttlepower/master/Resources/Images/facelighting.png"
         type="Head" sizes="16x16">
@@ -22,6 +20,7 @@
     <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
         integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
         crossorigin=""></script>
+
     <!-- Load Esri Leaflet Geocoder from CDN, needed for Search Bar -->
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.css"
         integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
@@ -50,6 +49,12 @@
             left: 10px;
             bottom: 10px;
         }
+
+        #links {
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+        }
     </style>
 </head>
 
@@ -61,14 +66,22 @@
         <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
     </div>
 
+    <div id="links">
+        <button
+            onclick="window.location.href = 'https://stemlounge.com/muddy-america-color-balancing-trumps-election-map-infographic/';">Original
+            Muddy Map</button>
+        <button onclick="window.location.href = 'https://github.com/tuttlepower/VotingMap';">Github</button>
+    </div>
+
 
     <script type="text/javascript" src="us-votes.js"></script>
     <script>
-        //creates variable called map and sets the view to Ohio State's campus(latlong) with a zoom level of 15
+        //creates variable called map and sets the view to middle of America with a zoom level of 5
         var map = L.map('map', {
             center: [39.0902, -95.7129],
             zoom: 5,
         });
+
 
         //Sets basemap color and features 
         L.esri.basemapLayer('Gray').addTo(map);
@@ -78,15 +91,9 @@
             url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/1',
             simplifyFactor: 0.5,
             precision: 5,
-<<<<<<< HEAD
-            weight: 1,
-            opacity:1,
-            fillOpacity:95,
-=======
             weight: .3,
             //opacity:1,
             fillOpacity: 1,
->>>>>>> ea588e46e4ead0db3697df6e8a25b2c8fd7852ac
             color: 'white',
             //fillColor: 'white',
             style: function (feature) {
@@ -119,27 +126,53 @@
             }
         }).addTo(map);
         //binds popups to the counties layer
-        counties.bindPopup(function (feature, us_votes) {
+        counties.bindPopup(function (layer) {
             for (i in us_votes) {
-                if (feature.properties.GEOID === us_votes[i].combined_fips) {
-                    //this determines what goes inside the popup for each building
-                    return L.Util.template(
-                        '<p>{GEOID} Need to ' + us_votes[i].votes_dem + 'see something</p><p>{NAME}</p>',
-                        feature.feature.properties);
-
-                } else {
-                    return {
-                        L.Util.template(
-                        '<p>{GEOID}</p><p>{NAME}</p>',
+                if (layer.feature.properties.GEOID == us_votes[i].combined_fips) {
+                        return L.Util.template(
+                            '<div><p>State :'+us_votes[i].state_abbr.toString() +'</p><p>County Name: {NAME}</p>'+'<p>Democratic Votes: '+ us_votes[i].votes_dem +'</p></div>',
                             layer.feature.properties);
-                    }
+
+
                 }
-
             }
-
-
+            //this determines what goes inside the popup for each building
 
         });
+
+        /////////////////////////////
+
+        //Placeholder
+        var Test = L.layerGroup();
+
+        //uses esri basemaplayers to get a light theme and streets
+        var grayscale = L.esri.basemapLayer('Gray'),
+            grayLabels = L.esri.basemapLayer('GrayLabels'),
+            darkmode = L.esri.basemapLayer('DarkGray');
+
+
+
+
+        //gives different basemap options
+        var baseLayers = {
+            "Grayscale": grayscale,
+            "Grayscale Labeled": grayLabels,
+            "Dark Mode": darkmode,
+
+        };
+
+        //different layers can be placed here, allowing them to be seen and hidden 
+        var overlays = {
+            //"buildings": buildings,
+            "Test": Test
+        };
+
+        //inserts layers to map
+        L.control.layers(baseLayers, overlays).addTo(map);
+
+        /////////////////////////////
+
+
         //inserts generic searchbar
         var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
         L.esri.Geocoding.geosearch({

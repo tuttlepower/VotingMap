@@ -20,6 +20,7 @@
     <script src="https://unpkg.com/esri-leaflet@2.3.0/dist/esri-leaflet.js"
         integrity="sha512-1tScwpjXwwnm6tTva0l0/ZgM3rYNbdyMj5q6RSQMbNX6EUMhYDE3pMRGZaT41zHEvLoWEK7qFEJmZDOoDMU7/Q=="
         crossorigin=""></script>
+
     <!-- Load Esri Leaflet Geocoder from CDN, needed for Search Bar -->
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.css"
         integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
@@ -63,10 +64,10 @@
     <div id="legend">
         <img src="muddy_key_labeled_compressed.png" alt="muddy label" width="150" height="150">
     </div>
+    
     <div id="links">
         <button onclick="window.location.href = 'https://stemlounge.com/muddy-america-color-balancing-trumps-election-map-infographic/';">Original Muddy Map</button>
         <button onclick="window.location.href = 'https://github.com/tuttlepower/VotingMap';">Github</button>
-        
     </div>
 
 
@@ -129,6 +130,40 @@
                 '<p>{GEOID}</p><p>{NAME}</p>',
                 layer.feature.properties);
         });
+
+        /////////////////////////////
+    
+        //Placeholder
+        var Test = L.layerGroup();
+
+        //uses esri basemaplayers to get a light theme and streets
+        var grayscale = L.esri.basemapLayer('Gray'),
+            grayLabels = L.esri.basemapLayer('GrayLabels'),
+        darkmode = L.esri.basemapLayer('DarkGray');
+
+
+        
+
+        //gives different basemap options
+        var baseLayers = {
+            "Grayscale": grayscale,
+            "Grayscale Labeled": grayLabels,
+            "Dark Mode": darkmode,
+            
+        };
+
+        //different layers can be placed here, allowing them to be seen and hidden 
+        var overlays = {
+            //"buildings": buildings,
+            "Test": Test
+        };
+
+        //inserts layers to map
+        L.control.layers(baseLayers, overlays).addTo(map);
+
+        /////////////////////////////
+
+
         //inserts generic searchbar
         var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
         L.esri.Geocoding.geosearch({
